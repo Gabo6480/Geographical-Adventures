@@ -377,7 +377,7 @@ MonoBehaviour:
   countryData: {fileID: 11400000, guid: 1bd34af60df8cb04197d7f07dc9ddf72, type: 2}
   vertexCompute: {fileID: 7200000, guid: a8b469a79e147084aab929978c7d6ecc, type: 3}
   meshNormalsCompute: {fileID: 7200000, guid: 202973355476fb84687180c65f0adbfd, type: 3}
-  testMat: {fileID: 2100000, guid: ad7c91f80fa28f249a238e0ed8bcbab3, type: 2}
+  testMat: {fileID: 2100000, guid: e1d9e001fd58100419fa7dad43ddb882, type: 2}
   polygonProcessor: {fileID: 1778711278}
   coastline: {fileID: 2125986101}
   heightSettings: {fileID: 11400000, guid: 159ce22bf92aee440ad10625d3e3a8e9, type: 2}
@@ -523,6 +523,51 @@ Transform:
   - {fileID: 172569775}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &897318301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 897318302}
+  - component: {fileID: 897318303}
+  m_Layer: 0
+  m_Name: Mesh Debbuger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &897318302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897318301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1972727173}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &897318303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897318301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc5069548cda01043aac2094931860fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshFilter: {fileID: 0}
 --- !u!1 &1124221622
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,11 +610,11 @@ MonoBehaviour:
   countryData: {fileID: 11400000, guid: 1bd34af60df8cb04197d7f07dc9ddf72, type: 2}
   vertexCompute: {fileID: 7200000, guid: a8b469a79e147084aab929978c7d6ecc, type: 3}
   meshNormalsCompute: {fileID: 7200000, guid: 202973355476fb84687180c65f0adbfd, type: 3}
-  testMat: {fileID: 2100000, guid: 687667496d85cca428c6ae193bb7091b, type: 2}
+  testMat: {fileID: 2100000, guid: e1d9e001fd58100419fa7dad43ddb882, type: 2}
   polygonProcessor: {fileID: 1778711278}
   coastline: {fileID: 2125986101}
   heightSettings: {fileID: 11400000, guid: 159ce22bf92aee440ad10625d3e3a8e9, type: 2}
-  meshHolder: {fileID: 297394152}
+  meshHolder: {fileID: 616978134}
   meshSaveFileName: Terrain Mesh (low res)
   outlinesSaveFileName: Outline Paths (low res)
   loadFile: {fileID: 4900000, guid: ded9fb0424a7b954fa8949ba376b8df2, type: 3}
@@ -952,6 +997,7 @@ Transform:
   - {fileID: 373773013}
   - {fileID: 1746966218}
   - {fileID: 145115975}
+  - {fileID: 897318302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2125986100

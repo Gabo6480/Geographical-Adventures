@@ -50,7 +50,10 @@ namespace Seb.Meshing
 			{
 				mesh.SetUVs(0, meshData.texCoords);
 			}
-		}
+
+			mesh.RecalculateTangents();
+            mesh.RecalculateBounds();
+        }
 
 		public static Mesh CreateMesh(Vector3[] vertices, int[] triangles, bool recalculateNormals = false)
 		{

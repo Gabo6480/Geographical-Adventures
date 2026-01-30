@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Terrain
   m_Shader: {fileID: 4800000, guid: 7393c6c0f9cec1949a1f7e27ef2876c3, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -17,6 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -73,11 +76,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapEast:
-        m_Texture: {fileID: 2800000, guid: 9fcb0132151194b49b92a20381019fb1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1240deda095e97644892e85a330710a7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapWest:
-        m_Texture: {fileID: 2800000, guid: 771c5f392e39a514cb4e258a17d70dd4, type: 3}
+        m_Texture: {fileID: 2800000, guid: f8eebe3e8ce63814cb177ca0f18b2146, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -133,3 +136,4 @@ Material:
     - _TestParams: {r: 11, g: 1.41, b: 2.5, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

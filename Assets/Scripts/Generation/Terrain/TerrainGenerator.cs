@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Seb.Meshing;
+using UnityEngine;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 namespace TerrainGeneration
 {
@@ -139,6 +140,7 @@ namespace TerrainGeneration
 
 			for (int i = 0; i < country.shape.polygons.Length; i++)
 			{
+				Debug.Log($"Generating mesh ({i + 1 } / {country.shape.polygons.Length}) of '{country.name}'");
 				Polygon polygon = country.shape.polygons[i];
 				PolygonMeshData polygonMeshData = CreateCountryPolygonMesh(polygon);
 				if (polygonMeshData != null)
@@ -203,10 +205,43 @@ namespace TerrainGeneration
 			// ---- Triangulate ----
 			int[] triangles = TerrainGeneration.Triangulator.Triangulate(processedPolygon.reprojectedOutline, processedPolygon.reprojectedInnerPoints, processedPolygon.reprojectedHoles);
 
-			// Assign heights to vertices:
-			// At this stage, vertices are all points on unit sphere.
-			// After this they will have magntitude (1 + h) where h is the corresponding value in the heightmap [0, 1]
-			ComputeBuffer vertexBuffer = ComputeHelper.CreateStructuredBuffer(processedPolygon.spherePoints);
+			Vector3[] polygonSpherePoints = processedPolygon.spherePoints;
+
+			Vector4[] texCoords = new Vector4[polygonSpherePoints.Length];
+            //Calculate UVs
+            for (int i = 0; i < polygonSpherePoints.Length; i++)
+			{
+                //We use spherical projection for UVs, however we need to flip the U and V coords to get textures to align properly
+                texCoords[i].x = 1f - (0.5f + (Mathf.Atan2(polygonSpherePoints[i].x, polygonSpherePoints[i].z) / (Mathf.PI * 2)));
+				texCoords[i].y = 1f - (0.5f - (Mathf.Asin(polygonSpherePoints[i].y) / Mathf.PI));
+				texCoords[i].z = 0f;
+				texCoords[i].w = 1f;
+
+                //Also we need to shift and wrap the U coord to move the seam close to The Bering Strait
+                //This will help reduce visible seams on landmasses
+                texCoords[i].x = (0.5f + texCoords[i].x) % 1f;
+            }
+
+			for (int i = 0; i < triangles.Length; i+=3)
+			{
+				int idx1 = triangles[i];
+				int idx2 = triangles[i + 1];
+				int idx3 = triangles[i + 2];
+
+				if (Mathf.Abs(texCoords[idx1].x - texCoords[idx2].x) > 0.2f)
+				{
+					Debug.Log("Seam triangle detected");
+                }
+                if (Mathf.Abs(texCoords[idx1].x - texCoords[idx3].x) > 0.2f)
+                {
+                    Debug.Log("Seam triangle detected");
+                }
+            }
+
+            // Assign heights to vertices:
+            // At this stage, vertices are all points on unit sphere.
+            // After this they will have magntitude (1 + h) where h is the corresponding value in the heightmap [0, 1]
+            ComputeBuffer vertexBuffer = ComputeHelper.CreateStructuredBuffer(polygonSpherePoints);
 			vertexCompute.SetBuffer(assignVertexHeightsKernel, "Vertices", vertexBuffer);
 			vertexCompute.SetInt("numVertices", vertexBuffer.count);
 
@@ -249,7 +284,7 @@ namespace TerrainGeneration
 			ComputeHelper.Release(vertexBuffer, normalsBuffer);
 			totalVertexCount += vertices.Length;
 
-			SimpleMeshData meshData = new SimpleMeshData(vertices, triangles, normals);
+			SimpleMeshData meshData = new SimpleMeshData(vertices, triangles, normals, texCoords);
 			PolygonMeshData polygonMeshData = new PolygonMeshData()
 			{
 				meshData = meshData,
@@ -419,8 +454,7 @@ namespace TerrainGeneration
 			numMeshesBeforeCombining = info.numMeshes;
 		}
 
-
-		class PolygonMeshData
+        class PolygonMeshData
 		{
 			public SimpleMeshData meshData;
 			public Bounds3D bounds; // bounds of vertices on unit sphere
