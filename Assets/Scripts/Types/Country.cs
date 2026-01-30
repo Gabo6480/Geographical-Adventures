@@ -15,7 +15,8 @@ public class Country
 	public float avgTemperature = 0.0f; // in Celsius
 
     public string continent;
-	public string alpha2Code;
+	public string alpha2Code = "";
+	public string fips = "";
 	public string alpha3Code;
 	public int population;
 

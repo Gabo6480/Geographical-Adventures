@@ -23,7 +23,14 @@ public class CountryReader
 			if (reader.TokenType == JsonToken.StartObject)
 			{
 				var country = ReadCountry();
-				if (!countryDic.ContainsKey(country.alpha3Code))
+                if(country.alpha2Code.Length == 0 && country.fips.Length != 0)
+				{
+					Debug.LogWarning($"Country '{country.name}' is missing alpha2Code, using FIPS_10 code '{country.fips}' instead.");
+                    country.alpha2Code = country.fips;
+                }
+
+
+                if (!countryDic.ContainsKey(country.alpha3Code))
 				{
                     countryDic.Add(country.alpha3Code, country);
                 }
@@ -93,14 +100,24 @@ public class CountryReader
 					case "NAME_SORT":
 						country.name_sort = reader.ReadAsString();
 						break;
-					case "ISO_A2":
+
                     case "FIPS_10":
-                    case "2_LETTER_CODE":
-						string code = reader.ReadAsString();
-						if (code.Length > 2) break;
-                        country.alpha2Code = code;
+						{
+                            string code = reader.ReadAsString();
+                            if (code.Length != 2 || (country.fips != null && country.fips.Length > 0)) break;
+                            country.fips = code;
+                        }
                         break;
-					case "ADM0_A3":
+                    case "ISO_A2":
+                    case "ISO_A2_EH":
+                    case "2_LETTER_CODE":
+						{
+                            string code = reader.ReadAsString();
+                            if (code.Length != 2 || (country.alpha2Code != null && country.alpha2Code.Length > 0)) break;
+                            country.alpha2Code = code;
+                        }
+                        break;
+                    case "ADM0_A3":
 						country.alpha3Code = reader.ReadAsString();
 						break;
 					case "ABBREV":
