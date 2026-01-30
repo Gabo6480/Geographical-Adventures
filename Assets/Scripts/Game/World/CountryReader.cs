@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class CountryReader
 {
 	JsonTextReader reader;
 
-	public Country[] ReadCountries(TextAsset countryFile)
+	public Country[] ReadCountries(TextAsset countryFile, TextAsset countryAvgTempFile)
 	{
 
 		reader = new JsonTextReader(new System.IO.StringReader(countryFile.text));
 
-		List<Country> countryList = new List<Country>();
+		Dictionary<string, Country> countryDic = new Dictionary<string, Country>();
 
 
 		ReadAhead(5);
@@ -21,7 +22,16 @@ public class CountryReader
 		{
 			if (reader.TokenType == JsonToken.StartObject)
 			{
-				countryList.Add(ReadCountry());
+				var country = ReadCountry();
+				if (!countryDic.ContainsKey(country.alpha3Code))
+				{
+                    countryDic.Add(country.alpha3Code, country);
+                }
+				else
+				{
+					Debug.LogWarning($"Duplicate country code found: {country.alpha3Code} ({country.name} and {countryDic[country.alpha3Code].name})");
+                    countryDic[country.alpha3Code] = country;
+                }
 			}
 			else
 			{
@@ -32,8 +42,29 @@ public class CountryReader
 
 		reader.Close();
 
-		//countryList.Sort((a, b) => (a.name.CompareTo(b.name)));
-		return countryList.ToArray();
+        string[] entries = countryAvgTempFile.text.Split('\n');
+        foreach (string entry in entries)
+        {
+			if (entry.Trim().Length == 0) continue;
+
+            string[] data = entry.Split(',');
+			if (data[0].Equals("Country")) continue;
+
+			string tempStr = data[6]?.Trim();
+            string countryCode = data[2];
+
+			if (tempStr == null || tempStr.Length == 0) continue;
+
+            float temp = float.Parse(tempStr);
+
+            if (countryDic.ContainsKey(countryCode))
+            {
+                countryDic[countryCode].avgTemperature = temp;
+            }
+        }
+
+        //countryList.Sort((a, b) => (a.name.CompareTo(b.name)));
+        return countryDic.Values.ToArray();
 	}
 
 	Country ReadCountry()
@@ -62,9 +93,13 @@ public class CountryReader
 					case "NAME_SORT":
 						country.name_sort = reader.ReadAsString();
 						break;
-					case "2_LETTER_CODE":
-						country.alpha2Code = reader.ReadAsString();
-						break;
+					case "ISO_A2":
+                    case "FIPS_10":
+                    case "2_LETTER_CODE":
+						string code = reader.ReadAsString();
+						if (code.Length > 2) break;
+                        country.alpha2Code = code;
+                        break;
 					case "ADM0_A3":
 						country.alpha3Code = reader.ReadAsString();
 						break;

@@ -34,12 +34,12 @@ namespace Seb.Meshing
 				vertices[bottomVertexIndex] = outline[i] - getUpDirection(outline[i]) * length;
 
 				int triIndex = i * 2 * 3;
-				triangles[triIndex + 0] = topVertexIndex;
-				triangles[triIndex + 1] = bottomVertexIndex;
+				triangles[triIndex + 0] = bottomVertexIndex;
+				triangles[triIndex + 1] = topVertexIndex;
 				triangles[triIndex + 2] = (bottomVertexIndex + 1) % vertices.Length;
 
-				triangles[triIndex + 3] = bottomVertexIndex;
-				triangles[triIndex + 4] = (bottomVertexIndex + 2) % vertices.Length;
+				triangles[triIndex + 3] = (bottomVertexIndex + 2) % vertices.Length;
+				triangles[triIndex + 4] = bottomVertexIndex;
 				triangles[triIndex + 5] = (bottomVertexIndex + 1) % vertices.Length;
 			}
 

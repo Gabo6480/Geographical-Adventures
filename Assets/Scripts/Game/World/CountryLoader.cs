@@ -6,10 +6,12 @@ public class CountryLoader : MonoBehaviour
 {
 	public bool autoRunOnAwake = true;
 	public TextAsset countryFile;
+	public TextAsset statesFile;
 	public TextAsset cityFile;
 	public TextAsset capitalsFile;
+    public TextAsset countryAvgTempFile;
 
-	[SerializeField] Country[] countries;
+    [SerializeField] Country[] countries;
 	bool loaded;
 
 	[ContextMenu("Run")]
@@ -40,23 +42,39 @@ public class CountryLoader : MonoBehaviour
 	{
 		if (!loaded || !Application.isPlaying)
 		{
-			if (countryFile != null)
-			{
-				CountryReader countryReader = new CountryReader();
-				countries = countryReader.ReadCountries(countryFile);
-			}
-
-			if (cityFile != null)
-			{
-				CityReader cityReader = new CityReader();
-				City[] allCities = cityReader.ReadCities(cityFile, capitalsFile);
-				AddCitiesToCountries(allCities);
-			}
-			loaded = true;
+			this.countries = LoadCountriesFromFiles(countryFile, statesFile, cityFile, capitalsFile, countryAvgTempFile);
+            loaded = true;
 		}
 	}
 
-	void AddCitiesToCountries(City[] allCities)
+	public static Country[] LoadCountriesFromFiles(TextAsset countryFile, TextAsset statesFile, TextAsset cityFile, TextAsset capitalsFile, TextAsset countryAvgTempFile)
+	{
+        Country[] countries = new Country[0];
+
+        if (countryFile != null)
+        {
+            CountryReader countryReader = new CountryReader();
+            countries = countryReader.ReadCountries(countryFile, countryAvgTempFile);
+        }
+
+        if (statesFile != null)
+        {
+            StateReader stateReader = new StateReader();
+            State[] states = stateReader.ReadStates(statesFile);
+            AddStatesToCountries(states, countries);
+        }
+
+        if (cityFile != null)
+        {
+            CityReader cityReader = new CityReader();
+            City[] allCities = cityReader.ReadCities(cityFile, capitalsFile);
+            AddCitiesToCountries(allCities, countries);
+        }
+
+        return countries;
+    }
+
+    public static void AddCitiesToCountries(City[] allCities, Country[] countries)
 	{
 		// Can happen due to mismatching country codes in files
 		int numCountriesWithoutCity = 0;
@@ -80,7 +98,8 @@ public class CountryLoader : MonoBehaviour
 			}
 			else
 			{
-				numCitiesWithoutCountry++;
+				Debug.LogWarning("City without valid country code: " + city.name + " (" + countryCode + ")");
+                numCitiesWithoutCountry++;
 			}
 		}
 
@@ -99,10 +118,56 @@ public class CountryLoader : MonoBehaviour
 			}
 		}
 
-		//Debug.Log("Num countries without a city: " + numCountriesWithoutCity + " Num cities without a country: " + numCitiesWithoutCountry);
+		Debug.Log("Num countries without a city: " + numCountriesWithoutCity + " Num cities without a country: " + numCitiesWithoutCountry);
 	}
 
-	/*
+    public static void AddStatesToCountries(State[] allStates, Country[] countries)
+    {
+        // Can happen due to mismatching country codes in files
+        int numCountriesWithoutStates = 0;
+        int numStatesWithoutCountry = 0;
+
+        HashSet<string> legitateCountryCodes = new HashSet<string>(countries.Select(x => x.alpha3Code));
+
+        var statesByCountry = new Dictionary<string, List<State>>();
+
+        foreach (State state in allStates)
+        {
+            string countryCode = state.countryAlpha3Code;
+            if (legitateCountryCodes.Contains(countryCode))
+            {
+
+                if (!statesByCountry.ContainsKey(countryCode))
+                {
+                    statesByCountry.Add(countryCode, new List<State>());
+                }
+                statesByCountry[countryCode].Add(state);
+            }
+            else
+            {
+                numStatesWithoutCountry++;
+            }
+        }
+
+
+        foreach (Country country in countries)
+        {
+            List<State> statesInCountry = new List<State>();
+            if (statesByCountry.TryGetValue(country.alpha3Code, out statesInCountry))
+            {
+                country.states = statesInCountry.ToArray();
+            }
+            else
+            {
+                country.states = new State[0];
+                numCountriesWithoutStates++;
+            }
+        }
+
+        Debug.Log("Num countries without a state: " + numCountriesWithoutStates + " Num states without a country: " + numStatesWithoutCountry);
+    }
+
+    /*
 	[ContextMenu("Create Country Info Template")]
 	void CreateCountryInfoJsonTemplate()
 	{

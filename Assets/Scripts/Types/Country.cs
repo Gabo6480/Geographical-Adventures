@@ -12,14 +12,17 @@ public class Country
 
 	public string abbreviation;
 
-	public string continent;
+	public float avgTemperature = 0.0f; // in Celsius
+
+    public string continent;
 	public string alpha2Code;
 	public string alpha3Code;
 	public int population;
 
 	// sorted by population (highest to lowest, with caveat: capital cities appear first)
 	public City[] cities;
-	public Shape shape;
+    public State[] states;
+    public Shape shape;
 
 	public string GetPreferredDisplayName(int maxDesiredLength = int.MaxValue, bool debug = false)
 	{

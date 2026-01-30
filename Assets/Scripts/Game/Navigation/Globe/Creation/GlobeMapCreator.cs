@@ -17,7 +17,7 @@ public class GlobeMapCreator : Generator
 	[Header("References")]
 	public Material countryMaterial;
 	public Material oceanMaterial;
-	public CountryLoader countryLoader;
+	public CountryData countryData;
 	public TextAsset averageHeightFile;
 
 	[Header("Save/Load")]
@@ -45,7 +45,7 @@ public class GlobeMapCreator : Generator
 		oceanMeshData = IcoSphere.Generate(oceanResolution, radius);
 		MeshHelper.CreateRendererObject("Ocean", oceanMeshData, oceanMaterial, transform);
 
-		Country[] countries = countryLoader.GetCountries();
+		Country[] countries = countryData.Countries;
 		allCountriesMeshData = new SimpleMeshData[countries.Length];
 
 		spherePoints = IcoSphere.Generate(resolution).vertices;
@@ -71,7 +71,7 @@ public class GlobeMapCreator : Generator
 		for (int i = 0; i < countries.Length; i++)
 		{
 			SimpleMeshData countryMeshData = GenerateCountry(countries[i]);
-			string countryName = countries[i].GetPreferredDisplayName();
+			string countryName = countries[i].alpha3Code;
 			countryMeshData.name = countryName;
 			MeshHelper.CreateRendererObject(countryName, countryMeshData, countryMaterial, transform);
 			allCountriesMeshData[i] = countryMeshData;
@@ -118,6 +118,12 @@ public class GlobeMapCreator : Generator
 			bool a = averageCountryElevations.TryGetValue(country.name, out h);
 			bool b = averageCountryElevations.TryGetValue(country.nameOfficial, out h);
 			bool c = averageCountryElevations.TryGetValue(country.name_long, out h);
+
+			if(!(a || b || c))
+			{
+				Debug.LogWarning($"No average elevation data for country: {country.name} / {country.nameOfficial} / {country.name_long}");
+            }
+
 			h = h / maxElevation;
 			float elevation = minRaiseHeight + h * raiseHeightMultiplier;
 			SimpleMeshData polygonMeshData = GeneratePolygon(country.shape.polygons[i], elevation, country.name);

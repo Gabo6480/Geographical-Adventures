@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Seb.Meshing;
+using UnityEngine;
+using static GlobeMapLoader;
 
 public class GlobeMapLoader : MonoBehaviour
 {
@@ -9,11 +10,12 @@ public class GlobeMapLoader : MonoBehaviour
 	public bool autoLoadOnAwake;
 	public TextAsset countriesLoadFile;
 	public TextAsset oceanLoadFile;
+    public CountryData countryData;
 
-	public Material countryMaterial;
+    public Material countryMaterial;
 	public Material oceanMaterial;
 
-	public Transform holder;
+    public Transform holder;
 
 	public bool hasLoaded { get; private set; }
 	public GameObject oceanObject { get; private set; }
@@ -29,20 +31,20 @@ public class GlobeMapLoader : MonoBehaviour
 			Load();
 		}
 	}
+    void FixedUpdate()
+    {
+        if (updateColoursFromRenderer)
+        {
+            for (int i = 0; i < countryObjects.Length; i++)
+            {
+                countryColours[i].colour = countryObjects[i].material.color;
+            }
+        }
 
-	void Update()
-	{
-		if (updateColoursFromRenderer)
-		{
-			for (int i = 0; i < countryObjects.Length; i++)
-			{
-				countryColours[i].colour = countryObjects[i].material.color;
-			}
-		}
+    }
 
-	}
-
-	public void Load()
+    [ContextMenu("Load Globe Map")]
+    public void Load()
 	{
 		LoadCountries();
 
@@ -62,14 +64,34 @@ public class GlobeMapLoader : MonoBehaviour
 		// Load countries
 		SimpleMeshData[] meshes = MeshSerializer.BytesToMeshes(countriesLoadFile.bytes);
 		countryObjects = new RenderObject[meshes.Length];
-		GameObject[] allObjects = new GameObject[meshes.Length];
+		countryColours = new CountryColour[meshes.Length];
+        GameObject[] allObjects = new GameObject[meshes.Length];
 
-		for (int i = 0; i < meshes.Length; i++)
+		Dictionary<string, Country> countryByCode = new Dictionary<string, Country>();
+		float highestAvgTemp = float.MinValue;
+		float lowestAvgTemp = float.MaxValue;
+
+        foreach (Country country in countryData.Countries)
 		{
+            if(country.avgTemperature > highestAvgTemp)
+				highestAvgTemp = country.avgTemperature;
+			if(country.avgTemperature < lowestAvgTemp)
+				lowestAvgTemp = country.avgTemperature;
 
+            countryByCode.Add(country.alpha3Code, country);
+        }
+
+		float tempRange = highestAvgTemp - lowestAvgTemp;
+
+        for (int i = 0; i < meshes.Length; i++)
+		{
 			Material materialInstance = new Material(countryMaterial);
-			materialInstance.color = countryColours[i].colour;
-			var countryRenderObject = MeshHelper.CreateRendererObject(meshes[i].name, meshes[i], materialInstance, holder, holder.gameObject.layer);
+			Country country = countryByCode[meshes[i].name];
+            countryColours[i].countryName = country.GetPreferredDisplayName();
+            countryColours[i].colour = Color.HSVToRGB(0f, 0f, 1f - Mathf.Pow((country.avgTemperature - lowestAvgTemp) / tempRange, 2));
+
+            materialInstance.color = countryColours[i].colour;
+			var countryRenderObject = MeshHelper.CreateRendererObject(countryColours[i].countryName, meshes[i], materialInstance, holder, holder.gameObject.layer);
 
 			AddCollider(countryRenderObject);
 			countryObjects[i] = countryRenderObject;
@@ -99,7 +121,7 @@ public class GlobeMapLoader : MonoBehaviour
 	{
 		public string countryName;
 		public Color colour;
-	}
+    }
 
 }
 

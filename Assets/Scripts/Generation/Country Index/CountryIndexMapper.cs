@@ -9,7 +9,9 @@ public class CountryIndexMapper : MonoBehaviour
 	public int width = 8192;
 	const int countryFillKernel = 0;
 
-	public RenderTexture CreateCountryIndexMap()
+    [SerializeField] CountryData countryData;
+
+    public RenderTexture CreateCountryIndexMap()
 	{
 		return CreateCountryIndexMap(width, width / 2);
 	}
@@ -25,7 +27,7 @@ public class CountryIndexMapper : MonoBehaviour
 
 	void WriteCountryIndices(RenderTexture texture)
 	{
-		Country[] countries = FindObjectOfType<CountryLoader>().GetCountries();
+		Country[] countries = countryData.Countries;
 
 		var metaData = new List<PolygonMetaData>();
 		var points = new List<Vector2>();

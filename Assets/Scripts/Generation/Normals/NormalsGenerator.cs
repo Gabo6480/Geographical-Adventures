@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
 
 public class NormalsGenerator : MonoBehaviour
 {
@@ -15,7 +18,8 @@ public class NormalsGenerator : MonoBehaviour
 
 	public MeshRenderer display;
 
-	RenderTexture normalsWest;
+
+    RenderTexture normalsWest;
 	RenderTexture normalsEast;
 	RenderTexture heightWest;
 	RenderTexture heightEast;
@@ -65,12 +69,23 @@ public class NormalsGenerator : MonoBehaviour
 	}
 
 	// Update is called once per frame
-	void Update()
+	void FixedUpdate()
 	{
-		display.material.SetTexture("NormalsWest", normalsWest);
+        display.material.SetTexture("NormalsWest", normalsWest);
 		display.material.SetTexture("NormalsEast", normalsEast);
-		//transform.position = transform.position.normalized;
-	}
+        //transform.position = transform.position.normalized;
+    }
+
+	[ContextMenu("Save Files")]
+    void SaveFiles()
+	{
+		string folderPath = Application.dataPath + "/Data/World Tiles/";
+		Debug.Log("Saving normalsWest to: " + folderPath);
+        FileHelper.SaveRenderTextureToJPG(folderPath + "normalsWest.jpg", normalsWest, size, size);
+
+        Debug.Log("Saving normalsEast to: " + folderPath);
+        FileHelper.SaveRenderTextureToJPG(folderPath + "normalsEast.jpg", normalsEast, size, size);
+    }
 
 	void OnDrawGizmos()
 	{

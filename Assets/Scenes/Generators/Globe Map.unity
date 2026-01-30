@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4492362, g: 0.4993055, b: 0.575714, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -104,7 +100,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +113,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -161,7 +157,7 @@ MonoBehaviour:
   tinyAreaThreshold: 0.00075
   countryMaterial: {fileID: 2100000, guid: d44913fc31de4384a83fd26f30d47267, type: 2}
   oceanMaterial: {fileID: 2100000, guid: 5c5afe69bf9b32c48b9cf609fb79580f, type: 2}
-  countryLoader: {fileID: 2023727550}
+  countryData: {fileID: 11400000, guid: 1bd34af60df8cb04197d7f07dc9ddf72, type: 2}
   averageHeightFile: {fileID: 4900000, guid: 48a3f51667025d04dbe73a97f6de50ac, type: 3}
   countriesSaveFileName: Countries
   oceanSaveFileName: Ocean
@@ -173,13 +169,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 125886943}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &911081648
 GameObject:
@@ -206,9 +202,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 911081648}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 1
-  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -258,8 +253,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &911081650
 Transform:
   m_ObjectHideFlags: 0
@@ -267,13 +266,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 911081648}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.2894683, y: -0.35752895, z: 0.23846819, w: 0.855286}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 41.734, y: -39.386, z: 15.62}
 --- !u!1 &2019258710
 GameObject:
@@ -305,8 +304,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoLoadOnAwake: 1
-  countriesLoadFile: {fileID: 4900000, guid: 01fa31f9a41e8a043b18646bfb4b74df, type: 3}
+  countriesLoadFile: {fileID: 4900000, guid: 25d0dcf63998607498870b23f7c6b733, type: 3}
   oceanLoadFile: {fileID: 4900000, guid: 902f54d19fec3484fb7405eb6449b51c, type: 3}
+  countryData: {fileID: 11400000, guid: 1bd34af60df8cb04197d7f07dc9ddf72, type: 2}
   countryMaterial: {fileID: 2100000, guid: d44913fc31de4384a83fd26f30d47267, type: 2}
   oceanMaterial: {fileID: 2100000, guid: 5c5afe69bf9b32c48b9cf609fb79580f, type: 2}
   holder: {fileID: 2019258712}
@@ -801,60 +801,18 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2019258710}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2023727549
-GameObject:
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2023727551}
-  - component: {fileID: 2023727550}
-  m_Layer: 0
-  m_Name: Country Loader (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2023727550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023727549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5c635882d881144fb0c3b7871494871, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  autoRunOnAwake: 0
-  countryFile: {fileID: 4900000, guid: 663e585d2c2099a41886f9227128cfce, type: 3}
-  cityFile: {fileID: 4900000, guid: ad350dee819aaab42981bde375f8176e, type: 3}
-  capitalsFile: {fileID: 4900000, guid: 45561d6299b0b334c8376668502dce3d, type: 3}
-  countries: []
---- !u!4 &2023727551
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2023727549}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Roots:
+  - {fileID: 125886945}
+  - {fileID: 2019258712}
+  - {fileID: 911081650}

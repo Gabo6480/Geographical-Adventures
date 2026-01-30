@@ -4,22 +4,34 @@ using UnityEngine;
 
 public class CountryOutlines : MonoBehaviour
 {
-	public Color colour;
+	public Color countryColour;
+	public Color stateColour;
 	public bool useTransformSpace;
 	public bool projectToSphere;
 	public float radius = 1;
 	OutlineRenderer outlineRenderer;
 
-	void Start()
+	[SerializeField] CountryData countryData;
+
+    [Space]
+    public bool renderStates = false;
+
+    void Start()
 	{
-		CountryLoader countryLoader = FindObjectOfType<CountryLoader>();
-		Country[] countries = countryLoader.GetCountries();
+		Country[] countries = countryData.Countries;
 
 		outlineRenderer = GetComponent<OutlineRenderer>();
 
 		for (int i = 0; i < countries.Length; i++)
 		{
-			CreateOutlinePathOnSphere(countries[i].shape.polygons);
+			CreateOutlinePathOnSphere(countries[i].shape.polygons, false);
+			if (renderStates)
+			{
+				for (int j = 0; j < countries[i].states.Length; j++)
+				{
+					CreateOutlinePathOnSphere(countries[i].states[j].shape.polygons, true);
+                }
+			}
 		}
 	}
 
@@ -30,7 +42,7 @@ public class CountryOutlines : MonoBehaviour
 		//GetComponent<OutlineRenderer>().Add(path);
 	}
 
-	void CreateOutlinePathOnSphere(Polygon[] polygons)
+	void CreateOutlinePathOnSphere(Polygon[] polygons, bool isState)
 	{
 		List<LineSegment> lineSegments = new List<LineSegment>();
 
@@ -60,7 +72,7 @@ public class CountryOutlines : MonoBehaviour
 
 		}
 
-		outlineRenderer.Add(lineSegments.ToArray(), colour);
+		outlineRenderer.Add(lineSegments.ToArray(), isState ? stateColour : countryColour);
 
 	}
 
