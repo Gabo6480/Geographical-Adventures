@@ -31,16 +31,12 @@ float sampleHeight(int2 index) {
 
 float calculateWorldHeight(int2 index) {
 	float h = sampleHeight(index);
-	return worldRadius + h * heightMultiplier;//
+    return h; // worldRadius + h * heightMultiplier
 }
 
-float2 calculateUV(int2 index) {
-    return index / float2(totalWidth - 1, totalHeight - 1);
-}
-
-float3 calculateWorldPoint(int2 index, float2 uv)
-{
+float3 calculateWorldPoint(int2 index) {
 	float height = calculateWorldHeight(index);
+	float2 uv = index / float2(totalWidth - 1, totalHeight - 1);
 	float3 p = longitudeLatitudeToPoint(uvToLongitudeLatitude(uv));
 	return p * height;
 }
@@ -51,48 +47,20 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	if ((int)id.x >= tileSize || (int)id.y >= tileSize) { return; }
 
 	int2 index = id.xy + int2(offset, 0);
-	
-    int2 idxNorth = wrapIndex(index + int2(0, 1));
-    int2 idxSouth = wrapIndex(index + int2(0, -1));
-    int2 idxWest = wrapIndex(index + int2(-1, 0));
-	int2 idxEast = wrapIndex(index + int2(1, 0));
-	
-	float2 uvNorth = calculateUV(idxNorth);
-	float2 uvSouth = calculateUV(idxSouth);
-	float2 uvWest = calculateUV(idxWest);
-    float2 uvEast = calculateUV(idxEast);
+	//	N
+	//W + E
+	//	S
+    float height = sampleHeight(wrapIndex(index));
+    float heightNorth = sampleHeight(wrapIndex(index + int2(0, 1)));
+    float heightSouth = sampleHeight(wrapIndex(index + int2(0, -1)));
+    float heightWest = sampleHeight(wrapIndex(index + int2(-1, 0)));
+    float heightEast = sampleHeight(wrapIndex(index + int2(1, 0)));
 
-    float3 posNorth = calculateWorldPoint(wrapIndex(idxNorth), uvNorth);
-    float3 posSouth = calculateWorldPoint(wrapIndex(idxSouth), uvSouth);
-    float3 posWest = calculateWorldPoint(wrapIndex(idxWest), uvWest);
-    float3 posEast = calculateWorldPoint(wrapIndex(idxEast), uvEast);
+	// Calculate the difference in height (slope) along the U and V axes
+    float dHdU = heightEast - heightWest;
+    float dHdV = heightNorth - heightSouth; // Note: You may need to invert V depending on your texture coordinate system
+	
+    float3 normal = normalize(float3(-dHdU * heightMultiplier, -dHdV * heightMultiplier, 1.0));
 
-	float3 dirNorth = normalize(posNorth - posSouth);
-	float3 dirEast = normalize(posEast - posWest);
-	
-    float3 dirUvNorth = normalize(uvNorth - uvSouth);
-    float3 dirUvEast = normalize(uvEast - uvWest);
-	
-    
-    float r = 1.0f / (dirUvNorth.x * dirUvEast.y - dirUvNorth.y * dirUvEast.x);
-    float3 tangent = normalize((dirNorth * dirUvEast.y - dirEast * dirUvNorth.y) * r);
-	
-	float3 normal = normalize(cross(dirNorth, dirEast));
-	
-	// Gram-Schmidt orthogonalize tangent
-    tangent = normalize(tangent - normal * dot(normal, tangent));
-	
-	// Calculate binormal using cross product and check for mirroring
-    float3 binormal = cross(normal, tangent);
-	
-	// Project the object space normal onto the tangent space basis vectors.
-	// The resulting components (x, y, z) correspond to the T, B, and N axes 
-	// in the new tangent space.
-	float3 normalTangent = normalize(float3(
-	    dot(normal, tangent), // New X (Tangent direction)
-	    dot(normal, binormal), // New Y (Binormal direction)
-	    dot(normal, normal) // New Z (Normal direction)
-	));
-
-    Normals[id.xy] = float4(normalTangent.xyz, 1);
+    Normals[id.xy] = float4(normal.xyz * 0.5 + 0.5, height);
 }

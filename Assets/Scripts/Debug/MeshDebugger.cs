@@ -14,10 +14,13 @@ public class MeshDebugger : MonoBehaviour
 
         var mesh = meshFilter.mesh;
 
+        Quaternion rotation = meshFilter.transform.rotation;
+        Vector3 scale = meshFilter.transform.localScale;
+
         Gizmos.color = Color.cyan;
         for (int i = 0; i < mesh.vertices.Length; i++)
         {
-            Vector3 position = mesh.vertices[i];
+            Vector3 position = Vector3.Scale(rotation * mesh.vertices[i], scale);
             Gizmos.color = Color.cyan;
             Gizmos.DrawSphere(position, 0.2f);
             Gizmos.color = Color.green;

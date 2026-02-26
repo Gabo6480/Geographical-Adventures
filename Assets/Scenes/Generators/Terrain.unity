@@ -617,7 +617,7 @@ MonoBehaviour:
   meshHolder: {fileID: 616978134}
   meshSaveFileName: Terrain Mesh (low res)
   outlinesSaveFileName: Outline Paths (low res)
-  loadFile: {fileID: 4900000, guid: ded9fb0424a7b954fa8949ba376b8df2, type: 3}
+  loadFile: {fileID: 4900000, guid: 73fda26eb370a9745a1282b647fb25f5, type: 3}
   heightProcessor: {fileID: 172569774}
   totalVertexCount: 0
   numMeshesBeforeCombining: 0

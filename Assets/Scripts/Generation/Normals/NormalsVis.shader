@@ -42,7 +42,7 @@ Shader "Unlit/NormalsVis"
 				float3 dataEast = tex2D(NormalsEast, (i.uv - float2(0.5, 0)) * float2(2, 1));
 				float3 data = (i.uv.x <= 0.5)?dataWest:dataEast;
 
-				return float4(data.xyz * 0.5 + 0.5, 1);
+				return float4(data.xyz, 1);
 		
 				/*
 				float nx = data.x*2-1;
